@@ -13,7 +13,14 @@ import {
   extractStamp,
   verify,
 } from "../index.js";
-import { JPEG_B64, checkPngCrcs, makeGif, makePng } from "./helpers.js";
+import { crc32 } from "../formats/png.js";
+import {
+  JPEG_B64,
+  checkPngCrcs,
+  makeGif,
+  makeGifWithLct,
+  makePng,
+} from "./helpers.js";
 
 const STAMP = "你好, world! \u{1F389} stamp";
 
@@ -73,6 +80,11 @@ for (const [ext, make] of SAMPLES) {
   }));
 }
 
+test("crc32 已知向量: crc32(\"123456789\") === 0xCBF43926", () => {
+  // 标准 CRC-32 校验向量,防止查表实现多项式错误而"自证"通过
+  assert.equal(crc32(Buffer.from("123456789")), 0xcbf43926);
+});
+
 test("long stamp gif: 超过 255 字节(分块边界)", withTmp((_t, dir) => {
   const p = join(dir, "a.gif");
   writeFileSync(p, makeGif());
@@ -85,6 +97,21 @@ test("jpeg stamp too long: 超限抛 RangeError", withTmp((_t, dir) => {
   const p = join(dir, "a.jpg");
   writeFileSync(p, Buffer.from(JPEG_B64, "base64"));
   assert.throws(() => embedImage(p, "x".repeat(65534)), /JPEG 标记过长/);
+}));
+
+test("jpeg stamp 合法上限(65521 字节)成功", withTmp((_t, dir) => {
+  const p = join(dir, "a.jpg");
+  writeFileSync(p, Buffer.from(JPEG_B64, "base64"));
+  const s = "x".repeat(65521); // 65533 - KEYWORD 前缀 12 字节(11 字符 + null)
+  embedImage(p, s);
+  assert.equal(extractStamp(p), s);
+}));
+
+test("gif 带局部颜色表: roundtrip 正常", withTmp((_t, dir) => {
+  const p = join(dir, "a.gif");
+  writeFileSync(p, makeGifWithLct());
+  embedImage(p, STAMP);
+  assert.equal(extractStamp(p), STAMP);
 }));
 
 test("invalid utf-8 bytes: 提取抛错,verify 返回 false", withTmp((_t, dir) => {

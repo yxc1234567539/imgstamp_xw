@@ -50,6 +50,26 @@ export function makeGif() {
   return Buffer.concat([header, lsd, gct, desc, img]);
 }
 
+/** 构造带局部颜色表的 1x1 GIF89a(全局 4 色 + 局部 2 色)。 */
+export function makeGifWithLct() {
+  const header = Buffer.from("GIF89a", "latin1");
+  const lsd = Buffer.alloc(7);
+  lsd.writeUInt16LE(1, 0); // width
+  lsd.writeUInt16LE(1, 2); // height
+  lsd[4] = 0x80 | 0x01; // 有全局颜色表,4 色(12 字节)
+  const gct = Buffer.alloc(12); // 4 色
+  const desc = Buffer.alloc(10);
+  desc[0] = 0x2c;
+  desc.writeUInt16LE(0, 1);
+  desc.writeUInt16LE(0, 3);
+  desc.writeUInt16LE(1, 5);
+  desc.writeUInt16LE(1, 7);
+  desc[9] = 0x80; // 有局部颜色表,2 色(6 字节)
+  const lct = Buffer.from([0, 255, 0, 0, 0, 255]);
+  const img = Buffer.from([2, 2, 0x44, 0x01, 0, 0x3b]);
+  return Buffer.concat([header, lsd, gct, desc, lct, img]);
+}
+
 /** 1x1 白色 JPEG(Pillow 生成,base64 内嵌)。 */
 export const JPEG_B64 =
   "/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0aHBwgJC4nICIsIxwcKDcpLDAxNDQ0Hyc5PTgyPC4zNDL/2wBDAQkJCQwLDBgNDRgyIRwhMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjL/wAARCAABAAEDASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwD3+iiigD//2Q==";
