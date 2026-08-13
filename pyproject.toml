@@ -1,0 +1,42 @@
+[build-system]
+requires = ["hatchling>=1.21"]
+build-backend = "hatchling.build"
+
+[project]
+name = "imgstamp_xw"
+version = "0.1.0"
+description = "在图片文件头无损添加自定义字符串标记(支持 PNG / JPEG / GIF)"
+readme = "README.md"
+requires-python = ">=3.9"
+license = "MIT"
+authors = [{ name = "imgstamp_xw" }]
+keywords = ["image", "stamp", "watermark", "metadata", "png", "jpeg", "gif", "comment"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Multimedia :: Graphics",
+]
+dependencies = []
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0",
+    "pillow>=9.0",
+]
+
+[project.scripts]
+imgstamp_xw = "imgstamp_xw.cli:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/imgstamp_xw"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
