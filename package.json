@@ -1,6 +1,6 @@
 {
   "name": "imgstamp-xw",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "在图片文件头无损添加自定义字符串标记(支持 PNG / JPEG / GIF),与 Python 版 imgstamp_xw 功能等价",
   "type": "module",
   "main": "index.js",
