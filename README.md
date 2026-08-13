@@ -20,17 +20,17 @@ pip install imgstamp_xw
 ## 命令行用法
 
 ```bash
-# 给图片打上标记(默认原地修改,可用 -o 输出到新文件)
-imgstamp_xw embed photo.png "hello world"
+# 给图片打上标记(默认原地修改,可用 -o 输出到目录)
+imgstamp_xw embed "hello world" photo.png
 
 # 批量处理
-imgstamp_xw embed a.png b.jpg c.gif "hello world"
+imgstamp_xw embed "hello world" a.png b.jpg c.gif
 
 # 提取标记
 imgstamp_xw extract photo.png
 
-# 校验标记是否存在且未被篡改
-imgstamp_xw verify photo.png
+# 校验标记是否存在且一致
+imgstamp_xw verify photo.png "hello world"
 ```
 
 ## Python API
