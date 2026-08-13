@@ -15,7 +15,7 @@ def cmd_embed(args: argparse.Namespace) -> int:
     for path in args.paths:
         try:
             embed_many([path], args.stamp, output_dir=args.output_dir)
-        except (UnsupportedFormatError, OSError) as exc:
+        except (UnsupportedFormatError, OSError, ValueError) as exc:
             print(f"跳过 {path}: {exc}", file=sys.stderr)
             failures += 1
     ok = len(args.paths) - failures
@@ -81,7 +81,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     except UnsupportedFormatError as exc:
         print(f"错误: {exc}", file=sys.stderr)
         return 2
-    except OSError as exc:
+    except (OSError, ValueError) as exc:
         print(f"错误: {exc}", file=sys.stderr)
         return 2
 

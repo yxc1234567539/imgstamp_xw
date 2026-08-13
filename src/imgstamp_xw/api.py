@@ -77,10 +77,16 @@ def extract_stamp(path: PathLike) -> str | None:
 
     :return: 标记字符串;图片中没有标记时返回 ``None``
     :raises UnsupportedFormatError: 文件不是受支持的图片格式
+    :raises ValueError: 标记字节不是合法的 UTF-8 文本
     """
     handler, data = _load_handler(path)
     raw = handler.extract(data)
-    return _decode_stamp(raw) if raw is not None else None
+    if raw is None:
+        return None
+    try:
+        return _decode_stamp(raw)
+    except UnicodeDecodeError as exc:
+        raise ValueError("标记字节不是合法的 UTF-8 文本") from exc
 
 
 def verify(path: PathLike, stamp: Stamp) -> bool:
@@ -92,7 +98,7 @@ def verify(path: PathLike, stamp: Stamp) -> bool:
         return extract_stamp(path) == (
             stamp if isinstance(stamp, str) else _decode_stamp(stamp)
         )
-    except (UnsupportedFormatError, OSError):
+    except (UnsupportedFormatError, OSError, ValueError):
         return False
 
 

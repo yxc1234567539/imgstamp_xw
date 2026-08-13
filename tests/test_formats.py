@@ -114,3 +114,19 @@ def test_long_stamp(tmp_path: Path) -> None:
     long_stamp = "x" * 1000
     embed_image(path, long_stamp)
     assert extract_stamp(path) == long_stamp
+
+
+def test_jpeg_stamp_too_long(tmp_path: Path) -> None:
+    """JPEG COM 段 payload 上限 65533 字节,超出应明确报错。"""
+    path = _make_image(tmp_path, "JPEG")
+    with pytest.raises(ValueError, match="JPEG 标记过长"):
+        embed_image(path, "x" * 65534)
+
+
+def test_extract_invalid_utf8_raises(tmp_path: Path) -> None:
+    """嵌入的字节不是合法 UTF-8 时,提取应抛清晰的 ValueError。"""
+    path = _make_image(tmp_path, "PNG")
+    embed_image(path, b"\xff\xfe invalid")  # 非 UTF-8 字节
+    with pytest.raises(ValueError, match="UTF-8"):
+        extract_stamp(path)
+    assert verify(path, "anything") is False  # verify 返回 False 而非 traceback

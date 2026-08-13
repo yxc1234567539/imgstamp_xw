@@ -50,12 +50,17 @@ def _iter_segments(data: bytes):
         if offset + 2 > len(data):
             raise UnsupportedFormatError("JPEG 文件不完整: 段长度字段被截断")
         length = int.from_bytes(data[offset : offset + 2], "big")
+        if length < 2:
+            raise UnsupportedFormatError(f"JPEG 段长度非法: {length}")
         payload_start = offset + 2
         payload_end = payload_start + (length - 2)
         if payload_end > len(data):
             raise UnsupportedFormatError("JPEG 文件不完整: 段数据被截断")
         yield marker, data[payload_start:payload_end], start, payload_end
         offset = payload_end
+        if marker == 0xDA:  # SOS: 之后是熵编码数据,原样保留到结尾
+            yield None, None, offset, len(data)
+            return
 
 
 class JPEGHandler(BaseHandler):
@@ -65,6 +70,11 @@ class JPEGHandler(BaseHandler):
     def embed(self, data: bytes, stamp: bytes) -> bytes:
         if not data.startswith(SOI):
             raise UnsupportedFormatError("不是有效的 JPEG 文件")
+        if len(_PREFIX) + len(stamp) > 65533:
+            raise ValueError(
+                "JPEG 标记过长: COM 段 payload 最多 65533 字节,"
+                f"实际 {len(stamp)} 字节"
+            )
         segments = list(_iter_segments(data))  # 先完整解析以校验结构
         new_segment = _com_segment(_PREFIX + stamp)
         kept = bytearray()
