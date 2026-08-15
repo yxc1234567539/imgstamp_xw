@@ -36,8 +36,12 @@ dev = [
 [project.scripts]
 imgstamp_xw = "imgstamp_xw.cli:main"
 
+[tool.hatch.build]
+artifacts = ["assets"]
+
 [tool.hatch.build.targets.wheel]
 packages = ["src/imgstamp_xw"]
+force-include = { "assets" = "assets" }
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

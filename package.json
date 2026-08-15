@@ -10,7 +10,8 @@
   "files": [
     "index.js",
     "cli.js",
-    "formats/"
+    "formats/",
+    "assets/"
   ],
   "bin": {
     "imgstamp-xw": "cli.js"
