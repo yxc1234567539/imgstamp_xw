@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.1.3] - 2026-08-16
+
+- 发布 0.1.3：包含新增资产文件 `assets/imgs2.zip`
+
 ## [0.1.1] - 2026-02-XX
 
 - 新增 npm 包 `imgstamp-xw`:JS 实现与 Python 版功能等价(同一仓库双生态)
