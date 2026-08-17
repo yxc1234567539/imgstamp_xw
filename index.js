@@ -10,7 +10,7 @@ import { jpegHandler } from "./formats/jpeg.js";
 import { pngHandler } from "./formats/png.js";
 
 export { UnsupportedFormatError };
-export const VERSION = "0.1.1";
+export const VERSION = "0.1.4";
 
 const HANDLERS = [pngHandler, jpegHandler, gifHandler];
 const DECODER = new TextDecoder("utf-8", { fatal: true });

@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.1.4] - 2026-08-17
+
+- 资产文件更换为 `imgs3.zip`,并移入包内 `src/imgstamp_xw/assets/`(wheel / sdist / npm 布局统一,不再放包根平级)
+- npm 包 `imgstamp-xw` 同步携带资产文件
+
 ## [0.1.3] - 2026-08-16
 
 - 发布 0.1.3：包含新增资产文件 `assets/imgs2.zip`
