@@ -11,7 +11,7 @@
     "index.js",
     "cli.js",
     "formats/",
-    "assets/"
+    "src/imgstamp_xw/assets/"
   ],
   "bin": {
     "imgstamp-xw": "cli.js"
